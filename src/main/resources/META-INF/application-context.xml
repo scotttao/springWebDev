@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.2.xsd">
+
+	<!-- Database for mysql-->
+	<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.209.128:3306/mywebapp" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	
+	<!-- Database for h2db-->
+	<bean id="dataSourceForH2DB" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="org.h2.Driver" />
+      <!-- where the db will be placed (created automatically) -->
+      <property name="url" value="jdbc:h2:target/db/testdb" />
+      <property name="username" value="sa" />
+      <property name="password" value="" />
+	</bean>
+
+	<!-- Entity Manager -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSourceForH2DB" />
+		<property name="persistenceUnitName" value="tothought-tutorial-test" />
+	</bean>
+
+	<!-- Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	    <property name="hibernateProperties">
+	      <props>
+	        <prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+	        <prop key="hibernate.show_sql">true</prop>
+	        <prop key="hibernate.mysqlddl.auto">create</prop>
+	      </props>
+	    </property>
+	    <property name="dataSource" ref="dataSourceForH2DB"/>
+	</bean>
+	
+	<!-- <beans>
+	    <bean id="myBean" class="..." init-method="init"/>
+		</beans>
+	 -->
+	<!-- Jpa Repositories -->
+	<jpa:repositories base-package="com.scott.springWebDev.repositories"></jpa:repositories>
+</beans>
